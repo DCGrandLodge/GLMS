@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D94A4904-E3E6-418F-8EF4-007C6DF0207F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EntityFramework.Extended</RootNamespace>
+    <AssemblyName>EntityFramework.Extended</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audit\AlwaysAuditAttribute.cs" />
+    <Compile Include="Audit\AuditAction.cs" />
+    <Compile Include="Audit\AuditAttribute.cs" />
+    <Compile Include="Audit\AuditConfiguration.cs" />
+    <Compile Include="Audit\AuditEntity.cs" />
+    <Compile Include="Audit\AuditEntryState.cs" />
+    <Compile Include="Audit\AuditKey.cs" />
+    <Compile Include="Audit\AuditKeyCollection.cs" />
+    <Compile Include="Audit\AuditLog.cs" />
+    <Compile Include="Audit\AuditLogger.cs" />
+    <Compile Include="Audit\AuditProperty.cs" />
+    <Compile Include="Audit\AuditPropertyCollection.cs" />
+    <Compile Include="Audit\AuditPropertyFormatAttribute.cs" />
+    <Compile Include="Audit\NotAuditedAttribute.cs" />
+    <Compile Include="DynamicQuery\Dynamic.cs" />
+    <Compile Include="Extensions\AuditExtensions.cs" />
+    <Compile Include="Extensions\BatchExtensions.cs" />
+    <Compile Include="Extensions\DataRecordExtensions.cs" />
+    <Compile Include="Extensions\ExpressionExtensions.cs" />
+    <Compile Include="Extensions\FutureExtensions.cs" />
+    <Compile Include="Extensions\ObjectQueryExtensions.cs" />
+    <Compile Include="Future\FutureContext.cs" />
+    <Compile Include="Future\FutureCount.cs" />
+    <Compile Include="Future\FutureException.cs" />
+    <Compile Include="Future\FuturePlan.cs" />
+    <Compile Include="Future\FutureQuery.cs" />
+    <Compile Include="Future\FutureQueryBase.cs" />
+    <Compile Include="Future\FutureRunner.cs" />
+    <Compile Include="Future\FutureStore.cs" />
+    <Compile Include="Future\FutureValue.cs" />
+    <Compile Include="Future\IFutureContext.cs" />
+    <Compile Include="Future\IFutureQuery.cs" />
+    <Compile Include="Mapping\DbTypeConversion.cs" />
+    <Compile Include="Mapping\EntityMap.cs" />
+    <Compile Include="Mapping\MappingResolver.cs" />
+    <Compile Include="Mapping\PropertyMap.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\DelegateFactory.cs" />
+    <Compile Include="Reflection\DynamicProxy.cs" />
+    <Compile Include="Reflection\EFQueryUtils.cs" />
+    <Compile Include="Reflection\FieldAccessor.cs" />
+    <Compile Include="Reflection\ILGeneratorExtensions.cs" />
+    <Compile Include="Reflection\IMemberAccessor.cs" />
+    <Compile Include="Reflection\IMemberInfo.cs" />
+    <Compile Include="Reflection\IMethodAccessor.cs" />
+    <Compile Include="Reflection\LateBinder.cs" />
+    <Compile Include="Reflection\MemberAccessor.cs" />
+    <Compile Include="Reflection\MethodAccessor.cs" />
+    <Compile Include="Reflection\ObjectCloner.cs" />
+    <Compile Include="Reflection\ObjectCopier.cs" />
+    <Compile Include="Reflection\PropertyAccessor.cs" />
+    <Compile Include="Reflection\ReflectionHelper.cs" />
+    <Compile Include="Reflection\TypeAccessor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Audit\Audit.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

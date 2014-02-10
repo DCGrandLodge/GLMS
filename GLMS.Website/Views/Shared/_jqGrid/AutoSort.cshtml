@@ -1,0 +1,10 @@
+﻿@model GLMS.MVC.Extensions.jqGrid.GridModel
+            @if(Model.SortFields.Count()>0) 
+            { 
+                <text>
+                sortname: '@Model.SortFields.First().FieldName',
+                sortorder: '@Model.SortFields.First().Direction.ToString().ToLower()'
+                </text>
+            } else {
+                <text>sortorder: 'asc'</text>
+            }

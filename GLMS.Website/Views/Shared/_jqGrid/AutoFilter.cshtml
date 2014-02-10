@@ -1,0 +1,26 @@
+﻿@model GLMS.MVC.Extensions.jqGrid.GridModel
+            beforeRequest: function ()
+            {
+                $('#@Model.JQGridID').jqGrid('filterToolbar', {
+                    beforeSearch: function(){
+                        if ($(this).data('firstSearchAbortedFlag') != '1')
+                        {
+                            $(this).data('firstSearchAbortedFlag', '1');
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                if ($(this).data('defaultValuesSetFlag') != '1')
+                {
+                    $(this).data('defaultValuesSetFlag', '1');
+                    @{
+                        foreach (var Term in Model.SearchTerms)
+                        {
+                            <text>$('#gs_@(Term.Key)').val('@(Term.Value.Item1)');</text>
+                        }
+                    }
+                    $('#@(Model.JQGridID)')[0].triggerToolbar();
+                }
+            }

@@ -1,0 +1,57 @@
+﻿@using System.Text.RegularExpressions
+@using GLMS.Website.Models.LogView
+@model string
+
+@{
+    int anchor = 0;
+    foreach (Match match in DetailModel.Regex.Matches(Model))
+    {
+        <div>@{
+        //@Html.Encode(Model.Substring(anchor, match.Index - anchor));
+        int frameAnchor = match.Index;
+        GroupCollection groups = match.Groups;
+        Group type = groups["type"];
+        @Html.Encode(Model.Substring(frameAnchor, type.Index - frameAnchor));
+        frameAnchor = type.Index;
+        <span class='st-frame'>
+        @{
+            if(type.Success) {@Html.Encode(Model.Substring(frameAnchor, type.Index - frameAnchor));<span class='st-type'>@type.Value</span>frameAnchor = type.Index + type.Length;}
+            var group = groups["method"];
+            if (group.Success) {@Html.Encode(Model.Substring(frameAnchor, group.Index - frameAnchor));<span class='st-method'>@group.Value</span>frameAnchor = group.Index + group.Length;}
+            Group parameters = groups["params"];
+            @Html.Encode(Model.Substring(frameAnchor, parameters.Index - frameAnchor));
+            <span class='st-params'>(@{
+                int position = 0;
+                foreach (string parameter in parameters.Captures[0].Value.Split(','))
+                {
+                    int spaceIndex = parameter.LastIndexOf(' ');
+                    if (spaceIndex <= 0)
+                    {
+                        <span class='st-param'>@parameter.Trim()</span>
+                    }
+                    else
+                    {
+                        if (position++ > 0) {@Html.Raw(",")}
+                        string argType = parameter.Substring(0, spaceIndex).Trim();
+                        <span class='st-param-type'>@argType</span>
+                        @Html.Raw(" ");
+                        string argName = parameter.Substring(spaceIndex + 1).Trim();
+                        <span class='st-param-name'>@argName</span>
+                    }
+                }
+            })</span>
+            frameAnchor = parameters.Index + parameters.Length;
+            group = groups["file"];
+            if (group.Success) {@Html.Encode(Model.Substring(frameAnchor, group.Index - frameAnchor));<span class='st-file'>@group.Value</span>frameAnchor = group.Index + group.Length;}
+            group = groups["line"];
+            if (group.Success) {@Html.Encode(Model.Substring(frameAnchor, group.Index - frameAnchor));<span class='st-line'>@group.Value</span>frameAnchor = group.Index + group.Length;}
+        }
+        </span>
+        anchor = match.Index + match.Length;
+        @Html.Encode(Model.Substring(frameAnchor, anchor - frameAnchor));
+        }</div>
+    }
+
+    @Html.Encode(Model.Substring(anchor));
+    
+}

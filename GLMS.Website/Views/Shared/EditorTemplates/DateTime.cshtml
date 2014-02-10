@@ -1,0 +1,3 @@
+﻿@model DateTime?
+@Html.TextBox("",Model == null ? (string)null : Model.Value.ToShortDateString(), new { @class = "date datepicker" /*, type = "date"*/ })
+@Html.RegisterClientScript(@"$(function(){$('.datepicker').datepicker();});")

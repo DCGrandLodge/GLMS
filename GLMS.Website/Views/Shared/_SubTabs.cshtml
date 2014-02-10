@@ -1,0 +1,22 @@
+﻿@model IEnumerable<GLMS.Models.TabModel>
+@foreach (var tab in ViewBag.SubTabs)
+{
+    <li class="@if (tab.Active) {<text>ui-tabs-selected</text>}@if (tab.Disabled) {<text> ui-state-disabled</text>}@if (tab.Submenu != null) {<text> dropdown</text>}">
+        <a @if (tab.Id != null)
+            {<text>id="subtab-@tab.Id"</text> } 
+            @if (!(tab.Disabled || tab.Active))
+            {<text>href="@tab.Url"</text> } 
+            @if (tab.Url == "#")
+            {<text>onclick='return false;'</text>}
+            class="nav-tab promptForSave" >@tab.Name</a>
+        @if (tab.Submenu != null)
+        {
+            <ul>
+                @foreach (var submenu in tab.Submenu)
+                {
+                    <li><a @if (submenu.Id != null) { <text>id="subtab-@tab.Id-@submenu.Id"</text> }  @if (!(submenu.Disabled || submenu.Active)) { <text>href="@submenu.Url"</text> } class="nav-tab promptForSave" >@submenu.Name</a></li>
+                }
+            </ul>
+        }
+    </li>
+}

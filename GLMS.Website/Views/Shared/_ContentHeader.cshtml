@@ -1,0 +1,13 @@
+﻿@if(ViewBag.Header!=null){
+<h2>@ViewBag.Header
+    @if (ViewBag.SubHeader != null){<span class='subHeader'>@if (ViewBag.Header != null){<text> &ndash; </text>}@ViewBag.SubHeader</span>}
+</h2>
+}
+@if (TempData["__ErrorMessage"] != null)
+{
+    <div id="siteError" class="message-error">@Html.Raw(TempData["__ErrorMessage"].ToString())</div>
+}
+@if (TempData["__Success"] != null)
+{
+    <div id="siteSuccess" class="message-success">@Html.Raw(TempData["__Success"].ToString())</div>
+}

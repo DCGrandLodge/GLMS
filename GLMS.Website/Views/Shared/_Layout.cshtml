@@ -1,0 +1,103 @@
+﻿@{
+    Html.RegisterCSSInclude("~/Content/site.css");
+    Html.RegisterBundle("site", insertAt: 0);
+}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Grand Lodge Membership System@{if(ViewBag.Title != null){<text> - @ViewBag.Title</text>}}</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+        <script type="text/javascript">
+            var rootPath = '@Url.Content("~/")';
+        </script>
+        @RenderSection("Head", false)
+    </head>
+    <body class="@(ViewBag.PageSize ?? "large")">
+        <header>
+            <nav>
+                <ul id="menu">
+                @if (ViewBag.Navigation != false)
+                {
+                    @RenderSection("Header", false)
+                    if (ViewBag.FullMaintenance == null)
+                    {
+                        if (CurrentUser.IsAuthenticated)
+                        {
+                            <li>@Html.ActionLink("Home", "Index", "Home", "")</li>
+                            <li>@Html.ActionLink("Log Off", "LogOff", "Account", "")</li>
+                        }
+                        else
+                        {
+                            <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                            <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                        }
+                    }
+                }
+                </ul>
+            </nav>
+        </header>
+        <section id='main' class="content-wrapper main-content clear-fix">
+            @if (ViewBag.Tabs == null)
+            {
+                <div class="content-body ui-helper-clearfix">
+                    @Html.Partial("_ContentHeader")
+                    @RenderBody()
+                </div>
+            }
+            else
+            {
+            <div id="content" class="ui-helper-clearfix">
+                <div id="tabs" class="ui-tabs ui-widget-content ui-corner-all">
+                    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix">
+                        @Html.Partial("_Tabs", (object)ViewBag.Tabs)
+                    </ul>
+
+                    <div id="tab-current" class="content-body ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-clearfix">
+                    @if (ViewBag.SubTabs == null)
+                    {
+                        @Html.Partial("_ContentHeader")
+                        @RenderBody()
+                    }
+                    else
+                    {
+                        <div id="subtabs">
+                            <div class="ui-helper-clearfix">
+                            <ul class="subtabs">
+                                @Html.Partial("_SubTabs", (object)ViewBag.SubTabs)
+                            </ul>              
+                            </div>          
+                            <div id="subtab-current">
+                                @Html.Partial("_ContentHeader")
+                                @RenderBody()
+                            </div>
+                        </div>
+                    }
+                    </div>
+                </div>
+            </div>
+            }
+        </section>
+        @if(IsSectionDefined("Commands")) {
+            <section id="commands">
+                <div class="content-body ui-helper-clearfix">@RenderSection("Commands")</div>
+            </section>
+        }
+        <footer>
+            <div class="content-wrapper">
+                <div class="float-right">
+                    GLMS @ApplicationInstance.Application["AppVersion"]
+                </div>
+            </div>
+        </footer>
+        <div id='ajax-loading' class='ui-dialog ui-widget-content ui-corner-all ajax-loading'><p class='ajax-spinner'>Loading, please wait...</p></div>
+        <script type="text/javascript">
+            $(function () {
+                $('.ajax-loading').center({ position: 'fixed' });
+                $('body').applyStyles();
+            });
+        </script>
+        @RenderSection("scripts", required: false)
+    </body>
+</html>

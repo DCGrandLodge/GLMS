@@ -1,0 +1,16 @@
+﻿@model System.Collections.Specialized.NameValueCollection
+<div class='scroll-view'>
+    <table>
+        <tr>
+            <th class='name-col'>Name</th>
+            <th class='value-col'>Value</th>
+        </tr>
+        @foreach (string key in Model.Keys)
+        {
+            <tr>
+                <td class='key-col'>@key</td>
+                <td class='value-col'>@Model[key]</td>
+            </tr>
+        }
+    </table>
+</div>

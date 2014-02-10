@@ -1,0 +1,30 @@
+﻿@model GLMS.MVC.Extensions.jqGrid.GridModel
+        function triggerSearch(event,ui) { $('#@(Model.JQGridID)')[0].triggerToolbar(); }
+        function linkButton(act,title,id,icon) 
+        { 
+            var link = '<a href="'+act+'/'+id+'">';
+            var span;
+            if(icon) {
+                span = '<span title="' + title + '" style="display:inline-block;" class="ui-icon '+icon+'"></span>';
+            } else {
+                span = title;
+            }
+            return link + span + '</a>';
+        }
+        @*
+        @if(Model.CanDelete)
+        {<text>
+        function deleteButton(act,id,icon,name)
+        {
+            var href = '@(Url.Action(""))/'+act+'/'+id;
+            var link = '<a href="" onclick="return confirmDelete(\''+href+'\',\''+name+'\');">';
+            var span = '<span title="' + act + '" style="display:inline-block;" class="ui-icon '+icon+'"></span>';
+            return link + span + '</a>';
+        }
+        </text>
+        }
+        *@
+        function jqGrid_aspnet_loadErrorHandler(xht, st, handler) { 
+            $(document.body).css('font-size', '100%'); 
+            $(document.body).html(xht.responseText); 
+        } 

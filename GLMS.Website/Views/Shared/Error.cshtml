@@ -1,0 +1,35 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+
+@if(Model.Exception is GLMS.Website.Models.GLMSException)
+{
+    <div>@Model.Exception.Message</div>
+}
+else if (Model.Exception is HttpRequestValidationException)
+{
+    <div>Your input appears to contain HTML markup or other unsafe characters.  Please check your input and try again.</div>
+    try
+    {
+        string id = Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(Model.Exception, HttpContext.Current));
+        <div>If you think you've gotten this message in error, when calling for support please refer to error number: <span class='error'>@id</span></div>
+    }
+    catch (Exception)
+    {
+        <div>No error number was available.</div>
+    }
+}
+else
+{
+    try
+    {
+        string id = Elmah.ErrorLog.GetDefault(HttpContext.Current).Log(new Elmah.Error(Model.Exception, HttpContext.Current));
+        <div>An error occurred while processing your request.  When calling for support, please refer to error number: <span class='error'>@id</span></div>
+    }
+    catch (Exception)
+    {
+        <text>Sorry, an error occurred while processing your request but no error number was available.</text>
+    }
+}

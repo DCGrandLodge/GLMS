@@ -1,0 +1,35 @@
+﻿@model GLMS.Website.Models.LodgeIndexModel
+@{
+    ViewBag.Title = "Lodge List";
+    Html.RegisterBundle("jqgrid");
+}
+
+
+<table id="@Model.JQGridID"></table>
+
+<script type="text/javascript">
+    $(function () {
+        @Html.Partial("_jqGrid/Support", Model)
+        var grid = $('#@(Model.JQGridID)').jqGrid({
+            url: "@(Html.Raw(Url.Action("IndexData", new { jqGridID = Model.JQGridID })))",
+            colNames: ["LodgeID", "Number", "Name","Address", "Status", ""],
+            colModel: [
+                { index: 'LodgeID', name: 'LodgeID', hidden: true, key: true },
+                { index: 'Number', name: 'Number', width: '75px', searchoptions: { @Html.Partial("_jqGrid/AutoComplete", Url.Action("AutoCompleteIndex/Name")) } },
+                { index: 'Name', name: 'Name', width: '250px', searchoptions: { @Html.Partial("_jqGrid/AutoComplete", Url.Action("AutoCompleteIndex/Name")) } },
+                { index: 'Address', name: 'Address', width: '250px', searchoptions: { @Html.Partial("_jqGrid/AutoComplete", Url.Action("AutoCompleteIndex/Email")) } },
+                { index: 'Status', name: 'Status', width: '90px', searchoptions: { } },
+                { sortable:false, width:"90px", search: false,
+                    formatter: function(cellvalue, options, rowObject) { 
+                        return linkButton('@Url.Action("View")','View',options.rowId) + '&nbsp;&nbsp;' +
+                            linkButton('@Url.Action("Edit")','Edit',options.rowId) + '&nbsp;&nbsp;';
+                    }
+                }
+            ],
+
+            @Html.Partial("_jqGrid/AutoFilter", Model),
+            @Html.Partial("_jqGrid/AutoSort", Model)
+        });
+        grid.bindKeys();
+    });
+</script>

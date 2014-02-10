@@ -1,0 +1,144 @@
+﻿@model GLMS.Website.Models.LogView.IndexModel
+@{
+    ViewBag.Title = "Error Log for " + Model.ApplicationName;
+    Html.RegisterBundle("jqgrid");
+    Html.RegisterClientScriptInclude(Url.Content("~/Scripts/jquery-ui-timepicker-addon.js"));
+}
+<style type="text/css">pre,code{font-family:"Courier New", Courier;}.error-detail{font-size:110%;background-color:#ffc;padding:1em;}.st-type,.st-param-type{color:#00008B;}.st-param-name{color:#666;}.st-method{color:#008B8B;font-weight:bolder;}.st-file,.st-line{color:#8B008B;}.error-title{font-weight:700;font-size:120%;}.key-col{font-weight:700;}.ui-jqgrid tr.jqgrow td{vertical-align:top;}.see-also ul{list-style:disc outside none;padding-left:40px;line-height:1em;margin:0;}.error-log-time{padding:15px 0 10px;}.variables{padding-top:15px;}@@media screen{.scroll-view,.error-detail{overflow:auto;max-height:400px;}}</style>
+<div><input type="checkbox" id="include-resolved" /> <label for="include-resolved">Include Resolved Errors</label></div>
+<table id='@(Model.GridModel.JQGridID)' style='vertical-align:top;'></table>
+<div id='@(Model.GridModel.JQGridID)_pager'></div>
+<div style='padding-top:25px;'>
+    <a href='#' id='clear-log'>Clear Log</a>
+</div>
+<div title='Clear Log' style='display:none;' id='clear-log-dlg'>
+    <div style='margin:10px 0 4px;'>
+        <input type='radio' name='useOlderThan' id='truncate-log' value='false' /><label for='truncate-log'>&nbsp;Truncate Log</label>
+    </div>
+    <div style='margin:10px 0 4px;'>
+        <input type='radio' name='useOlderThan' id='trim-log' value='true' checked='checked' /><label for='trim-log'>&nbsp;Delete entries older than</label>
+    </div>
+    <div>
+        <input id="olderThan" name="olderThan" type="text" value="@DateTime.Now.ToString()" />
+    </div>
+</div>
+
+<script type='text/javascript'>
+    $(function () {
+        $('#clear-log').button().click(function(e) {
+            e.preventDefault();
+            $('#clear-log-dlg').dialog({
+                modal:true,
+                buttons: {
+                    'Clear Log': function() {
+                        $.ajax({
+                            url: '@Url.Action("ClearLog")',
+                            data: { olderThan: $('#trim-log')[0].checked ? $('#olderThan').val() : null },
+                            complete: function() {
+                                $('#clear-log-dlg').dialog('close');
+                                $('#@(Model.GridModel.JQGridID)').jqGrid().trigger('reloadGrid');
+                            }
+                        });
+                    },
+                    'Cancel': function() {
+                        $(this).dialog('close');
+                    }
+                }
+            });
+        });
+        $("#olderThan").datetimepicker({
+            autoSize: false,
+            appendText: ' (mm/dd/yyyy h:mm AM/PM)',
+            timeFormat: 'h:mm TT',
+            maxDate: '+100y',
+            yearRange: '-100:+0',
+            shortYearCutoff: '+0',
+            timeLabelSuffix: ' EST',
+            ampm: true,
+            showOn: "button",
+            buttonImage: '@Url.Content("~/Content/calendar.gif")',
+            buttonImageOnly: true
+        }); 
+        function linkButton(act,title,id,icon) 
+        { 
+            var link = '<a href="'+act+'/'+id+'">';
+            var span;
+            if(icon) {
+                span = '<span title="' + title + '" style="display:inline-block;" class="ui-icon '+icon+'"></span>';
+            } else {
+                span = title;
+            }
+            return link + span + '</a>';
+        }
+        function jqGrid_aspnet_loadErrorHandler(xht, st, handler) { 
+            $(document.body).css('font-size', '100%'); 
+            $(document.body).html(xht.responseText); 
+        } 
+        var grid = $('#@(Model.GridModel.JQGridID)').jqGrid({
+            url: "@(Url.Action("GetErrors", new { jqGridID = Model.GridModel.JQGridID }))",
+            colNames: ["ErrorID", "Err#","Host","Code","Error Type","Message","User","Date/Time"],
+            colModel: [
+                { index: "ID", name: "ID", hidden: true, key: true },
+                { index: "Sequence", name: "Sequence", width: "45px", 
+                    formatter: function(cellvalue, options, rowObject) {
+                        return cellvalue + '<br/><a class="resolve-error" href="#" data-rowid="'+rowObject[0]+'">Resolve</a>';
+                    }
+                },
+                { index: "Host", name: "Host", width: "120px" },
+                { hidden: true, index: "StatusCode", name: "StatusCode" },
+                { hidden: true, index: "ErrorType", name: "ErrorType" },
+                { index: "Message", name: "Message", width: "375px", cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' },
+                    formatter: function(cellvalue, options, rowObject) { 
+                        var error = rowObject[3] == "0" 
+                            ? rowObject[4]
+                            : ("HTTP " + rowObject[3] );
+                        return "<div class='ui-helper-clearfix'>"+
+                            "<div style='float:left;font-weight:bold;'>"+error+"</div>"+
+                            "<div style='float:right;padding-right:3px;'><a href='@Url.Action("Detail")/"+rowObject[0]+"'>Details...</a></div>"+
+                            "</div><div>"+cellvalue+"</div>";
+                    }
+                },
+                { index: "User", name: "User", width: "175px", cellattr: function (rowId, tv, rawObject, cm, rdata) { return 'style="white-space: normal;' } },
+                { index: "Time", name: "Time", width: "125px" }
+            ],
+            mtype: 'GET',
+            datatype: 'json',
+            gridview: true,
+            rowList: [10, 25, 50, 100], 
+            page: @Model.GridModel.Page,
+            viewrecords: true,
+            scrollrows: false,
+            pager: $('#@(Model.GridModel.JQGridID)_pager'),
+            loadError: jqGrid_aspnet_loadErrorHandler,
+            hoverrows: false,
+            rowNum: @Model.GridModel.PageSize,
+            height: '100%', 
+            viewsortcols: [false, 'vertical', false ],
+            postData: {
+                includeResolved: function() { return $('#include-resolved').prop('checked'); }
+            }
+        });
+        grid.navGrid('#@(Model.GridModel.JQGridID)_pager', { 
+            "edit": false, 
+            "add": false, 
+            "del": false, 
+            "search": false, 
+            "refresh": true, 
+            "view": false, 
+            "position": "left",
+            "cloneToTop": true }, 
+            {},{},{},{});
+        grid.bindKeys();
+        $('#include-resolved').change(function() {
+            grid.trigger('reloadGrid');
+        });
+        $('.resolve-error').live('click',function(e) {
+            e.preventDefault();
+            var id = $(this).attr('data-rowid');
+            $.ajax({
+                url: '@Url.Action("Resolve")/'+id+'?resolve=true',
+                complete: function() { grid.trigger('reloadGrid'); }
+            });
+        });
+    });
+</script>

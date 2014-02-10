@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BB464808-264F-45C9-B94B-9E59B9E1E754}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GLMS.DAL</RootNamespace>
+    <AssemblyName>GLMS.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EntityConfiguration\AddressConfig.cs" />
+    <Compile Include="EntityConfiguration\LodgeOfficerConfig.cs" />
+    <Compile Include="EntityConfiguration\LodgeMembershipConfig.cs" />
+    <Compile Include="EntityConfiguration\OfficeConfig.cs" />
+    <Compile Include="EntityConfiguration\MemberConfig.cs" />
+    <Compile Include="EntityConfiguration\DegreeConfig.cs" />
+    <Compile Include="EntityConfiguration\MemberDegreeConfig.cs" />
+    <Compile Include="EntityConfiguration\UserConfig.cs" />
+    <Compile Include="GLMSContext.cs" />
+    <Compile Include="EntityConfiguration\LodgeConfig.cs" />
+    <Compile Include="Migrations\201401311645384_Initial.cs" />
+    <Compile Include="Migrations\201401311645384_Initial.Designer.cs">
+      <DependentUpon>201401311645384_Initial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201401312214252_AddLodgeStatusCalculations.cs" />
+    <Compile Include="Migrations\201401312214252_AddLodgeStatusCalculations.Designer.cs">
+      <DependentUpon>201401312214252_AddLodgeStatusCalculations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Migrations\Seed\DegreeData.cs" />
+    <Compile Include="Migrations\Seed\UserData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Elmah\Elmah.csproj">
+      <Project>{e5fa3af9-89c2-482e-908c-e402ef38c8f4}</Project>
+      <Name>Elmah</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EntityFramework.Extended\EntityFramework.Extended.csproj">
+      <Project>{d94a4904-e3e6-418f-8ef4-007c6df0207f}</Project>
+      <Name>EntityFramework.Extended</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GLMS.BLL\GLMS.BLL.csproj">
+      <Project>{82d1a046-d09d-44a1-8843-ef33df9a56a3}</Project>
+      <Name>GLMS.BLL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201401311645384_Initial.resx">
+      <DependentUpon>201401311645384_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201401312214252_AddLodgeStatusCalculations.resx">
+      <DependentUpon>201401312214252_AddLodgeStatusCalculations.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

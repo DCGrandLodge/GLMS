@@ -1,0 +1,65 @@
+﻿@model GLMS.Website.Models.LogView.DetailModel
+@{
+    ViewBag.SubTitle = String.Format("Error {1}: {0}", Model.ErrorType, Model.Sequence);
+}
+<style type="text/css">pre,code{font-family:"Courier New", Courier;}.error-detail{font-size:110%;background-color:#ffc;padding:1em;}.st-type,.st-param-type{color:#00008B;}.st-param-name{color:#666;}.st-method{color:#008B8B;font-weight:bolder;}.st-file,.st-line{color:#8B008B;}.error-title{font-weight:700;font-size:120%;}.key-col{font-weight:700;}.ui-jqgrid tr.jqgrow td{vertical-align:top;}.see-also ul{list-style:disc outside none;padding-left:40px;line-height:1em;margin:0;}.error-log-time{padding:15px 0 10px;}.variables{padding-top:15px;}@@media screen{.scroll-view,.error-detail{overflow:auto;max-height:400px;}}</style>
+<div class="ui-helper-clearfix">
+    <div class='error-title'>
+        <div>@Model.ErrorType</div>
+        <div>@Html.Raw(Model.Message)</div>
+    </div>
+    <div class="error-resolve">
+        @if(Model.Resolved) { <text>Resolved</text> }
+    </div>
+</div>
+
+<div class='error-detail'>
+@Html.DisplayFor(m => m.Detail, "StackTrace")
+</div>
+
+<div class='error-log-time'>Logged on @Model.Time.ToLongDateString() at @Model.Time.ToLongTimeString()</div>
+<div class='see-also'>
+    See also:
+    <ul>
+        <li>@Html.ActionLink("Original ASP.Net error page","Html",new { id = Model.ID })</li>
+        <li>Raw/Source data in @Html.ActionLink("XML","XML",new { id = Model.ID }) or @Html.ActionLink("JSON","JSON",new { id = Model.ID })</li>
+    </ul>
+</div>
+
+<div id='accordion' class='variables'>
+    @if (Model.EntityValidationErrors.Count > 0)
+    {
+    <h3><a href="#">Entity Validation Errors</a></h3>
+    <div>
+    @Html.DisplayFor(x => x.EntityValidationErrors, "Variables")
+    </div>
+    }
+    @if (Model.QueryString.Count > 0)
+    {
+    <h3><a href="#">Query String (GET)</a></h3>
+    <div>
+    @Html.DisplayFor(x => x.QueryString, "Variables")
+    </div>
+    }
+    @if (Model.Form.Count > 0)
+    {
+    <h3><a href="#">Form Variables (POST)</a></h3>
+    <div>
+    @Html.DisplayFor(x => x.Form, "Variables")
+    </div>
+    }
+    <h3><a href="#">Server Variables</a></h3>
+    <div>
+    @Html.DisplayFor(x => x.ServerVariables, "Variables")
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink(Model.Resolved ? "Un-Resolve" : "Resolve", "Resolve", new { id = Model.ID, resolve = !Model.Resolved }, new { @class = "resolve-button" })
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#accordion').accordion({ collapsible: true, autoHeight: false, });
+        $('.resolve-button').button();
+    });
+</script>
