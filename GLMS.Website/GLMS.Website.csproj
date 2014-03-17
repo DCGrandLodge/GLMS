@@ -155,7 +155,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="local.config" />
+    <Content Include="local.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="local.Debug.config" />
     <Content Include="local.Release.config" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />

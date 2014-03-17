@@ -46,7 +46,7 @@ namespace GLMS.Website.Controllers
                 LodgeID = x.LodgeID,
                 Number = x.Number,
                 Name = x.Name,
-                Address = x.Address.Street + " " + x.Address.City,
+                Address = x.Address.Street + " " + x.Address.City + " " + x.Address.State,
                 Status = x.Status
             });
         }

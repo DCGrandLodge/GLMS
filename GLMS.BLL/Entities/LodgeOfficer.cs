@@ -13,6 +13,7 @@ namespace GLMS.BLL.Entities
         public Guid MemberID { get; set; }
         public Guid LodgeOfficeID { get; set; }
 
+        public bool Proxy { get; set; }
         public bool Appointed { get; set; }
         public DateTime DateElected { get; set; }
         public DateTime? DateInstalled { get; set; }

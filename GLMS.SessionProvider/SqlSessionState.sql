@@ -23,24 +23,15 @@ GO
 
 /*****************************************************************************/
 
-USE master
-GO
-
-/* Create and populate the session state database */
-
-IF DB_ID(N'PLinx.ASPState') IS NULL BEGIN
-    DECLARE @cmd nvarchar(500)
-    SET @cmd = N'CREATE DATABASE [PLinx.ASPState]'
-    EXEC(@cmd)
-END    
-GO
-
 /* Drop all tables, startup procedures, stored procedures and types. */
 
 /* Drop the DeleteExpiredSessions_Job */
 
+use [master]
+go
+
 DECLARE @jobname nvarchar(200)
-SET @jobname = N'PLinx_ASPState' + '_Job_DeleteExpiredSessions' 
+SET @jobname = N'GLMS_ASPState' + '_Job_DeleteExpiredSessions' 
 
 -- Delete the [local] job 
 -- We expected to get an error if the job doesn't exist.
@@ -51,22 +42,19 @@ GO
 DECLARE @sstype nvarchar(128)
 SET @sstype = N'sstype_persisted'
 
-IF UPPER(@sstype) = 'SSTYPE_TEMP' AND OBJECT_ID(N'dbo.PLinx_ASPState_Startup', 'P') IS NOT NULL BEGIN
-    DROP PROCEDURE dbo.PLinx_ASPState_Startup
+IF UPPER(@sstype) = 'SSTYPE_TEMP' AND OBJECT_ID(N'dbo.GLMS_ASPState_Startup', 'P') IS NOT NULL BEGIN
+    DROP PROCEDURE dbo.GLMS_ASPState_Startup
 END    
 
-USE [PLinx.ASPState]
+USE [GLMS.ASPState]
 GO
 
-IF OBJECT_ID(N'dbo.ASPStateTempSessions','U') IS NOT NULL BEGIN
+IF OBJECT_ID(N'dbo.ASPStateTempSessions','U') IS NOT NULL 
     DROP TABLE dbo.ASPStateTempSessions
-END
+GO
 
-IF OBJECT_ID(N'dbo.ASPStateTempApplications','U') IS NOT NULL BEGIN
+IF OBJECT_ID(N'dbo.ASPStateTempApplications','U') IS NOT NULL 
     DROP TABLE dbo.ASPStateTempApplications
-END
-
-USE [PLinx.ASPState]
 GO
 
 IF (EXISTS (SELECT name FROM sysobjects WHERE (name = N'GetMajorVersion') AND (type = 'P')))
@@ -210,8 +198,6 @@ GO
 
 /*****************************************************************************/
 
-USE [PLinx.ASPState]
-
 /* Find out the version */
 DECLARE @ver int
 EXEC dbo.GetMajorVersion @@ver=@ver OUTPUT
@@ -222,7 +208,7 @@ IF (@ver >= 8)
     SET @cmd = N'
         CREATE PROCEDURE dbo.CreateTempTables
         AS
-            CREATE TABLE [PLinx.ASPState].dbo.ASPStateTempSessions (
+            CREATE TABLE [GLMS.ASPState].dbo.ASPStateTempSessions (
                 SessionId           nvarchar(88)    NOT NULL PRIMARY KEY,
                 Created             datetime        NOT NULL DEFAULT GETUTCDATE(),
                 Expires             datetime        NOT NULL,
@@ -239,21 +225,21 @@ IF (@ver >= 8)
 				LastUrl				nvarchar(255)	NULL,
             ) 
 
-            CREATE NONCLUSTERED INDEX Index_Expires ON [PLinx.ASPState].dbo.ASPStateTempSessions(Expires)
+            CREATE NONCLUSTERED INDEX Index_Expires ON [GLMS.ASPState].dbo.ASPStateTempSessions(Expires)
 
-            CREATE TABLE [PLinx.ASPState].dbo.ASPStateTempApplications (
+            CREATE TABLE [GLMS.ASPState].dbo.ASPStateTempApplications (
                 AppId               int             NOT NULL PRIMARY KEY,
                 AppName             char(280)       NOT NULL,
             ) 
 
-            CREATE NONCLUSTERED INDEX Index_AppName ON [PLinx.ASPState].dbo.ASPStateTempApplications(AppName)
+            CREATE NONCLUSTERED INDEX Index_AppName ON [GLMS.ASPState].dbo.ASPStateTempApplications(AppName)
 
             RETURN 0'
 ELSE
     SET @cmd = N'
         CREATE PROCEDURE dbo.CreateTempTables
         AS
-            CREATE TABLE [PLinx.ASPState].dbo.ASPStateTempSessions (
+            CREATE TABLE [GLMS.ASPState].dbo.ASPStateTempSessions (
                 SessionId           nvarchar(88)    NOT NULL PRIMARY KEY,
                 Created             datetime        NOT NULL DEFAULT GETDATE(),
                 Expires             datetime        NOT NULL,
@@ -269,14 +255,14 @@ ELSE
 				LastUrl				nvarchar(255)	NULL,
             ) 
 
-            CREATE NONCLUSTERED INDEX Index_Expires ON [PLinx.ASPState].dbo.ASPStateTempSessions(Expires)
+            CREATE NONCLUSTERED INDEX Index_Expires ON [GLMS.ASPState].dbo.ASPStateTempSessions(Expires)
 
-            CREATE TABLE [PLinx.ASPState].dbo.ASPStateTempApplications (
+            CREATE TABLE [GLMS.ASPState].dbo.ASPStateTempApplications (
                 AppId               int             NOT NULL PRIMARY KEY,
                 AppName             char(280)       NOT NULL,
             ) 
 
-            CREATE NONCLUSTERED INDEX Index_AppName ON [PLinx.ASPState].dbo.ASPStateTempApplications(AppName)
+            CREATE NONCLUSTERED INDEX Index_AppName ON [GLMS.ASPState].dbo.ASPStateTempApplications(AppName)
 
             RETURN 0'
 
@@ -409,21 +395,21 @@ SET @cmd = N'
     SET @appId = NULL
 
     SELECT @appId = AppId
-    FROM [PLinx.ASPState].dbo.ASPStateTempApplications
+    FROM [GLMS.ASPState].dbo.ASPStateTempApplications
     WHERE AppName = @appName
 
     IF @appId IS NULL BEGIN
         BEGIN TRAN        
 
         SELECT @appId = AppId
-        FROM [PLinx.ASPState].dbo.ASPStateTempApplications WITH (TABLOCKX)
+        FROM [GLMS.ASPState].dbo.ASPStateTempApplications WITH (TABLOCKX)
         WHERE AppName = @appName
         
         IF @appId IS NULL
         BEGIN
             EXEC GetHashCode @appName, @appId OUTPUT
             
-            INSERT [PLinx.ASPState].dbo.ASPStateTempApplications
+            INSERT [GLMS.ASPState].dbo.ASPStateTempApplications
             VALUES
             (@appId, @appName)
             
@@ -432,7 +418,7 @@ SET @cmd = N'
                 DECLARE @dupApp tAppName
             
                 SELECT @dupApp = RTRIM(AppName)
-                FROM [PLinx.ASPState].dbo.ASPStateTempApplications 
+                FROM [GLMS.ASPState].dbo.ASPStateTempApplications 
                 WHERE AppId = @appId
                 
                 RAISERROR(''SQL session state fatal error: hash-code collision between applications ''''%s'''' and ''''%s''''. Please rename the 1st application to resolve the problem.'', 
@@ -468,7 +454,7 @@ IF (@ver >= 8)
             DECLARE @now AS datetime
             SET @now = GETUTCDATE()
 
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @locked = Locked,
                 @lockDate = LockDateLocal,
@@ -487,7 +473,7 @@ IF (@ver >= 8)
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -505,7 +491,7 @@ ELSE
             DECLARE @now AS datetime
             SET @now = GETDATE()
 
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @locked = Locked,
                 @lockDate = LockDate,
@@ -524,7 +510,7 @@ ELSE
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -551,7 +537,7 @@ IF (@ver >= 8)
             DECLARE @now AS datetime
             SET @now = GETUTCDATE()
 
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @locked = Locked,
                 @lockAge = DATEDIFF(second, LockDate, @now),
@@ -570,7 +556,7 @@ IF (@ver >= 8)
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -601,7 +587,7 @@ IF (@ver >= 8)
             DECLARE @now AS datetime
             SET @now = GETUTCDATE()
 
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @locked = Locked,
                 @lockAge = DATEDIFF(second, LockDate, @now),
@@ -631,7 +617,7 @@ IF (@ver >= 8)
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -650,7 +636,7 @@ ELSE
             DECLARE @now AS datetime
             SET @now = GETDATE()
 
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @locked = Locked,
                 @lockDate = LockDate,
@@ -680,7 +666,7 @@ ELSE
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -710,7 +696,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
             
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 LockDate = CASE Locked
                     WHEN 0 THEN @now
@@ -740,7 +726,7 @@ IF (@ver >= 8)
                 Locked = 1
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -758,7 +744,7 @@ ELSE
             DECLARE @now AS datetime
 
             SET @now = GETDATE()
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @lockDate = LockDate = CASE Locked
                     WHEN 0 THEN @now
@@ -784,7 +770,7 @@ ELSE
                 Locked = 1
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'    
@@ -815,7 +801,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
             
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 LockDate = CASE Locked
                     WHEN 0 THEN @now
@@ -849,7 +835,7 @@ IF (@ver >= 8)
                 Locked = 1
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -881,7 +867,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
             
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 LockDate = CASE Locked
                     WHEN 0 THEN @now
@@ -926,7 +912,7 @@ IF (@ver >= 8)
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'
@@ -945,7 +931,7 @@ ELSE
             DECLARE @now AS datetime
 
             SET @now = GETDATE()
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, @now), 
                 @lockDate = LockDate = CASE Locked
                     WHEN 0 THEN @now
@@ -982,7 +968,7 @@ ELSE
                     END
             WHERE SessionId = @id
             IF @length IS NOT NULL BEGIN
-                READTEXT [PLinx.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
+                READTEXT [GLMS.ASPState].dbo.ASPStateTempSessions.SessionItemLong @textptr 0 @length
             END
 
             RETURN 0'    
@@ -1002,7 +988,7 @@ IF (@ver >= 8)
             @id         tSessionId,
             @lockCookie int
         AS
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, GETUTCDATE()), 
                 Locked = 0
             WHERE SessionId = @id AND LockCookie = @lockCookie
@@ -1014,7 +1000,7 @@ ELSE
             @id         tSessionId,
             @lockCookie int
         AS
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, GETDATE()), 
                 Locked = 0
             WHERE SessionId = @id AND LockCookie = @lockCookie
@@ -1044,7 +1030,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemShort, 
                  Timeout, 
@@ -1077,7 +1063,7 @@ ELSE
             DECLARE @now AS datetime
             SET @now = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemShort, 
                  Timeout, 
@@ -1124,7 +1110,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemShort, 
                  Timeout, 
@@ -1164,7 +1150,7 @@ ELSE
             DECLARE @now AS datetime
             SET @now = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemShort, 
                  Timeout, 
@@ -1214,7 +1200,7 @@ IF (@ver >= 8)
             SET @now = GETUTCDATE()
             SET @nowLocal = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemLong, 
                  Timeout, 
@@ -1253,7 +1239,7 @@ ELSE
             DECLARE @now AS datetime
             SET @now = GETDATE()
 
-            INSERT [PLinx.ASPState].dbo.ASPStateTempSessions 
+            INSERT [GLMS.ASPState].dbo.ASPStateTempSessions 
                 (SessionId, 
                  SessionItemLong, 
                  Timeout, 
@@ -1298,7 +1284,7 @@ IF (@ver >= 8)
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETUTCDATE()), 
                 SessionItemShort = @itemShort, 
                 Timeout = @timeout,
@@ -1320,7 +1306,7 @@ ELSE
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETDATE()), 
                 SessionItemShort = @itemShort, 
                 Timeout = @timeout,
@@ -1352,7 +1338,7 @@ IF (@ver >= 8)
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETUTCDATE()), 
                 SessionItemShort = @itemShort, 
                 SessionItemLong = NULL, 
@@ -1374,7 +1360,7 @@ ELSE
 			@sessionUser nvarchar(128),
 			@sessionAccount nvarchar(128)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETDATE()), 
                 SessionItemShort = @itemShort, 
                 SessionItemLong = NULL, 
@@ -1407,7 +1393,7 @@ IF (@ver >= 8)
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETUTCDATE()), 
                 SessionItemLong = @itemLong,
                 Timeout = @timeout,
@@ -1429,7 +1415,7 @@ ELSE
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETDATE()), 
                 SessionItemLong = @itemLong,
                 Timeout = @timeout,
@@ -1461,7 +1447,7 @@ IF (@ver >= 8)
 			@sessionAccount nvarchar(128),
 			@lastUrl nvarchar(255)
         AS    
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, @timeout, GETUTCDATE()), 
                 SessionItemLong = @itemLong, 
                 SessionItemShort = NULL,
@@ -1484,7 +1470,7 @@ ELSE
 			@sessionAccount nvarchar(128),
 				@lastUrl nvarchar(255)
 		AS    
-			UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+			UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
 			SET Expires = DATEADD(n, @timeout, GETDATE()), 
 				SessionItemLong = @itemLong, 
 				SessionItemShort = NULL,
@@ -1508,7 +1494,7 @@ SET @cmd = N'
         @id     tSessionId,
         @lockCookie int
     AS
-        DELETE [PLinx.ASPState].dbo.ASPStateTempSessions
+        DELETE [GLMS.ASPState].dbo.ASPStateTempSessions
         WHERE SessionId = @id AND LockCookie = @lockCookie
         RETURN 0'
 EXEC(@cmd)    
@@ -1524,7 +1510,7 @@ IF (@ver >= 8)
         CREATE PROCEDURE dbo.TempResetTimeout
             @id     tSessionId
         AS
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, GETUTCDATE())
             WHERE SessionId = @id
             RETURN 0'
@@ -1533,7 +1519,7 @@ ELSE
         CREATE PROCEDURE dbo.TempResetTimeout
             @id     tSessionId
         AS
-            UPDATE [PLinx.ASPState].dbo.ASPStateTempSessions
+            UPDATE [GLMS.ASPState].dbo.ASPStateTempSessions
             SET Expires = DATEADD(n, Timeout, GETDATE())
             WHERE SessionId = @id
             RETURN 0'
@@ -1564,7 +1550,7 @@ IF (@ver >= 8)
 
             INSERT #tblExpiredSessions (SessionID)
                 SELECT SessionID
-                FROM [PLinx.ASPState].dbo.ASPStateTempSessions WITH (READUNCOMMITTED)
+                FROM [GLMS.ASPState].dbo.ASPStateTempSessions WITH (READUNCOMMITTED)
                 WHERE Expires < @now
 
             IF @@ROWCOUNT <> 0 
@@ -1580,7 +1566,7 @@ IF (@ver >= 8)
 
                 WHILE @@FETCH_STATUS = 0 
                     BEGIN
-                        DELETE FROM [PLinx.ASPState].dbo.ASPStateTempSessions WHERE SessionID = @SessionID AND Expires < @now
+                        DELETE FROM [GLMS.ASPState].dbo.ASPStateTempSessions WHERE SessionID = @SessionID AND Expires < @now
                         FETCH NEXT FROM ExpiredSessionCursor INTO @SessionID
                     END
 
@@ -1610,7 +1596,7 @@ ELSE
 
             INSERT #tblExpiredSessions (SessionID)
                 SELECT SessionID
-                FROM [PLinx.ASPState].dbo.ASPStateTempSessions WITH (READUNCOMMITTED)
+                FROM [GLMS.ASPState].dbo.ASPStateTempSessions WITH (READUNCOMMITTED)
                 WHERE Expires < @now
 
             IF @@ROWCOUNT <> 0 
@@ -1626,7 +1612,7 @@ ELSE
 
                 WHILE @@FETCH_STATUS = 0 
                     BEGIN
-                        DELETE FROM [PLinx.ASPState].dbo.ASPStateTempSessions WHERE SessionID = @SessionID AND Expires < @now
+                        DELETE FROM [GLMS.ASPState].dbo.ASPStateTempSessions WHERE SessionID = @SessionID AND Expires < @now
                         FETCH NEXT FROM ExpiredSessionCursor INTO @SessionID
                     END
 
@@ -1662,13 +1648,13 @@ IF UPPER(@sstype) = 'SSTYPE_TEMP' BEGIN
 
     SET @cmd = N'
         /* Create the startup procedure */
-        CREATE PROCEDURE dbo.PLinx_ASPState_Startup 
+        CREATE PROCEDURE dbo.GLMS_ASPState_Startup 
         AS
-            EXECUTE [PLinx.ASPState].dbo.CreateTempTables
+            EXECUTE [GLMS.ASPState].dbo.CreateTempTables
 
             RETURN 0'
     EXEC(@cmd)
-    EXECUTE sp_procoption @ProcName='dbo.PLinx_ASPState_Startup', @OptionName='startup', @OptionValue='true'
+    EXECUTE sp_procoption @ProcName='dbo.GLMS_ASPState_Startup', @OptionName='startup', @OptionValue='true'
 END    
 
 /*****************************************************************************/
@@ -1688,7 +1674,7 @@ BEGIN TRANSACTION
     SELECT @ReturnCode = 0     
 
     -- Add the job
-    SET @nameT = N'PLinx_ASPState' + '_Job_DeleteExpiredSessions'
+    SET @nameT = N'GLMS_ASPState' + '_Job_DeleteExpiredSessions'
     EXECUTE @ReturnCode = msdb.dbo.sp_add_job 
             @job_id = @JobID OUTPUT, 
             @job_name = @nameT, 
@@ -1705,7 +1691,7 @@ BEGIN TRANSACTION
     IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback 
     
     -- Add the job steps
-    SET @nameT = N'PLinx_ASPState' + '_JobStep_DeleteExpiredSessions'
+    SET @nameT = N'GLMS_ASPState' + '_JobStep_DeleteExpiredSessions'
     EXECUTE @ReturnCode = msdb.dbo.sp_add_jobstep 
             @job_id = @JobID,
             @step_id = 1, 
@@ -1731,7 +1717,7 @@ BEGIN TRANSACTION
     IF (@@ERROR <> 0 OR @ReturnCode <> 0) GOTO QuitWithRollback 
     
     -- Add the job schedules
-    SET @nameT = N'PLinx_ASPState' + '_JobSchedule_DeleteExpiredSessions'
+    SET @nameT = N'GLMS_ASPState' + '_JobSchedule_DeleteExpiredSessions'
     EXECUTE @ReturnCode = msdb.dbo.sp_add_jobschedule 
             @job_id = @JobID, 
             @name = @nameT, 

@@ -70,6 +70,10 @@
     <Compile Include="Migrations\201401312214252_AddLodgeStatusCalculations.Designer.cs">
       <DependentUpon>201401312214252_AddLodgeStatusCalculations.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201403171714595_AddOfficerProxy.cs" />
+    <Compile Include="Migrations\201403171714595_AddOfficerProxy.Designer.cs">
+      <DependentUpon>201403171714595_AddOfficerProxy.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Seed\DegreeData.cs" />
     <Compile Include="Migrations\Seed\UserData.cs" />
@@ -99,6 +103,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201401312214252_AddLodgeStatusCalculations.resx">
       <DependentUpon>201401312214252_AddLodgeStatusCalculations.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403171714595_AddOfficerProxy.resx">
+      <DependentUpon>201403171714595_AddOfficerProxy.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
