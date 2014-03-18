@@ -134,11 +134,22 @@ body {
 
 .content-wrapper {
     margin: 0 auto;
-    max-width: 960px;
+/*    max-width: 960px; */
 }
 
 /*Content Styles
 -----------------------*/
+.large .content-body, .large #tabs ul {
+    width: 960px;
+}
+
+.medium .content-body, .medium #tabs ul {
+    width: 770px;
+}
+.small .content-body, .small #tabs ul {
+    width: 600px;
+}
+
 #tabs .content-body, .content-body{
 	padding:20px 40px 30px 20px;
     margin: 0 auto 20px auto;
@@ -156,12 +167,6 @@ body {
 #tabs > ul {
     padding-right: 60px;
     margin: auto;
-}
-.medium .content-body, .medium #tabs ul {
-    width: 770px;
-}
-.small .content-body, .small #tabs ul {
-    width: 600px;
 }
 
 /* Header */
@@ -475,18 +480,44 @@ ul.subtabs ul li a{
 /*Content Layout Elements
 ------------------------------------*/
 
+.columns:before,
+.columns:after {
+	content: "";
+	display: table;
+	border-collapse: collapse;
+}
+.columns:after {
+	clear: both;
+}
+.columns {
+	min-height: 0; /* support: IE7 */
+}
 /* 'Large' Columns (default) */
 .columns-1, .columns-2, .columns-3, .columns-4, .columns-5, .columns-6, .columns {
-	float:left;
 	clear:both;
     margin-bottom: 15px;
 }
+
+.columns.max {
+    width: 100%;
+}
+
 .columns-1.compact, .columns-2.compact, .columns-3.compact, .columns-4.compact, .columns-5.compact, .columns-6.compact, .columns.compact {
     margin-bottom: 0px;
 }
+
 .column {
 	float:left;
 }
+
+.separation {
+    margin-top: 10px;
+}
+
+.column.float-right {
+    float: right;
+}
+
 .column:last-child {
     margin-right:0 !important;
 }
@@ -498,45 +529,45 @@ ul.subtabs ul li a{
 .large .column {
     margin-right: 40px;
 }
-.large .columns-1 .column{
-	width:1050px;
+.large .columns-1 > .column{
+	width:960px;
 }
-.large .columns-2 .column {
-	width:505px;
+.large .columns-2 > .column {
+	width:460px;
 }
-.large .columns-3 .column {
-	width:306px;
+.large .columns-3 > .column {
+	width:293px;
 }
-.large .columns-4 .column {
-	width:232px;
+.large .columns-4 > .column {
+	width:210px;
 }
-.large .columns-5 .column {
-	width:178px;
+.large .columns-5 > .column {
+	width:160px;
 }
-.large .columns-6 .column {
-	width:141px;
+.large .columns-6 > .column {
+	width:126px;
 }
 
 /* Medium Page Columns */
 .medium .column {
     margin-right: 40px;
 }
-.medium .columns-1 .column{
+.medium .columns-1 > .column{
 	width:770px;
 }
-.medium .columns-2 .column{
+.medium .columns-2 > .column{
 	width:365px;
 }
-.medium .columns-3 .column{
+.medium .columns-3 > .column{
 	width:230px;
 }
-.medium .columns-4 .column{
+.medium .columns-4 > .column{
 	width:162px;
 }
-.medium .columns-5 .column{
+.medium .columns-5 > .column{
 	width:122px;
 }
-.medium .columns-6 .column{
+.medium .columns-6 > .column{
 	width:95px;
 }
 
@@ -547,22 +578,22 @@ ul.subtabs ul li a{
 .small .wide-spacing .column {
     margin-right: 45px;
 }
-.small .columns-1 .column{
+.small .columns-1 > .column{
 	width:600px;
 }
-.small .columns-2 .column{
+.small .columns-2 > .column{
 	width:285px;
 }
-.small .columns-3 .column{
+.small .columns-3 > .column{
 	width:180px;
 }
-.small .columns-4 .column{
+.small .columns-4 > .column{
 	width:127px;
 }
-.small .columns-5 .column{
+.small .columns-5 > .column{
 	width:96px;
 }
-.small .columns-6 .column{
+.small .columns-6 > .column{
 	width:75px;
 }
 
@@ -628,9 +659,8 @@ option:disabled {
 fieldset {
     border: 1px solid black;
     border-radius: 8px;
-    padding: 10px 0 0 10px;
+    padding: 10px 0 10px 10px;
     margin: 0 0 15px 0;
-    width:100%;
 }
 
 legend {
@@ -1210,6 +1240,120 @@ aside {
 .ui-jqgrid .ui-state-default .ui-th-column select {
     text-transform: none;
 }
+
+.ui-jqgrid tr.jqgrow.hidden-error td {
+    border-top: 1px solid red;
+    border-bottom: 1px solid red;
+}
+
+.ui-jqgrid tr.jqgrow.hidden-error td:first-child ~ td:not([style*='display:none']),
+.ui-jqgrid tr.ui-subgrid.hidden-error td:first-child ~ td:not([style*='display:none']) {
+    border-left: 1px solid red;
+}
+.ui-jqgrid tr.jqgrow.hidden-error td:first-child ~ td:not([style*='display:none']) ~ td,
+.ui-jqgrid tr.ui-subgrid.hidden-error td:first-child ~ td:not([style*='display:none']) ~ td {
+    border-left: inherit;
+}
+.ui-jqgrid tr.jqgrow.hidden-error td:last-child,
+.ui-jqgrid tr.ui-subgrid.hidden-error td:last-child {
+    border-right: 1px solid red;
+}
+
+.ui-jqgrid .ui-jqgrid-btable { outline-style: none; }
+.ui-jqgrid tr.jqgroup { outline-style: none; }
+.ui-jqgrid .ui-pg-input { width: 15px; }
+
+/*JQ GRID UPDATES*/
+
+.ui-jqgrid{
+	border:1px solid #f4e3ba;
+	border-right:none;
+}
+.ui-jqgrid table {
+	border:none;
+}
+.ui-jqgrid .ui-state-default{
+	color:#ffffff;
+	background:#f17c0e;
+	border:1px solid #f4e3ba;
+	text-transform:uppercase;
+	font-size:.95em;
+}
+.ui-jqgrid a:link, .ui-jqgrid a:visited, .ui-jqgrid .ui-state-hover a:link, .ui-jqgrid tr.jqgrow.ui-state-hover a:link, .ui-jqgrid tr.jqgrow.ui-state-hover a:visited{
+	color: #00436e;
+   	text-decoration: underline;
+}
+.ui-jqgrid a:hover, .ui-jqgrid .ui-state-hover a:hover, .ui-jqgrid tr.jqgrow.ui-state-hover a:hover {
+    	color:#f17c0e;
+    	text-decoration: none;
+}
+.ui-jqgrid tr.jqgrow.ui-state-hover{
+	color: #2e2e2e;
+	background:#fff;
+}
+.ui-jqgrid tr.jqgrow.ui-state-highlight{
+	color: #2e2e2e;
+	background:#ffedc2;
+}
+.ui-jqgrid .ui-jqgrid-hbox input{
+	border:1px solid #e9d5b0;
+	height:15px;
+	padding:2px 5px;
+}
+.ui-jqgrid .ui-jqgrid-pager{
+	font-size:.9em;
+}
+.ui-jqgrid-pager tr td{
+	border:none;
+}
+.ui-jqgrid .ui-jqgrid-pager input{
+	border:1px solid #e9d5b0;
+	height:11px;
+	padding:2px 5px;
+}
+.ui-jqgrid .ui-search-toolbar{
+	border:1px solid #f7b100;
+}
+.ui-jqgrid .ui-search-toolbar th.ui-state-default{
+	background:#f9f0df;
+}
+.ui-jqgrid tr.jqgrow td{
+	padding:5px 0 5px 10px;
+	border:0;
+	border-right:1px solid #f4e3ba;
+	border-top:1px dotted #f4e3ba;
+}
+.ui-jqgrid .ui-jqgrid-htable th {
+	padding-top:5px;
+}
+.ui-jqgrid input.ui-pg-input{
+	width:20px;
+}
+.ui-th-column, .ui-jqgrid .ui-jqgrid-htable th.ui-th-column{
+	padding-top:5px;
+}
+
+.ui-jqgrid .ui-search-clear {
+    display: none;
+}
+
+.ui-jqgrid .ui-search-input {
+    border: none;
+    padding: 0;
+}
+
+.ui-jqgrid .ui-search-table {
+    width: 100%;
+}
+
+/* These align the main columns LEFT so that the sort arrows fit better */
+.ui-jqgrid .ui-jqgrid-htable th.ui-th-column {text-align:left}
+.ui-jqgrid .ui-jqgrid-htable th.ui-th-column div.ui-jqgrid-sortable {margin-left:3px;margin-top:3px}
+/* This centers the Group Header column */
+.ui-jqgrid .ui-jqgrid-htable th.ui-th-column-header {text-align: center; height: 22px; border-top-width: 0px; border-top-style: none; border-top-color: initial; }
+/* This removes the small 5px vertical line that jqgrid leaves when creating a group column */
+.ui-jqgrid .ui-jqgrid-htable th.ui-first-th-ltr {padding-top: 0px}
+                                                                                                                                                                                                                                                                             
 
 /*Drag*/
 .drag-highlight {

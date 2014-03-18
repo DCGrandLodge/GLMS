@@ -1,0 +1,152 @@
+﻿@model GLMS.Website.Models.LodgeEditModel
+
+@{
+    ViewBag.Title = String.Format("{0} #{1}", Model.Name, Model.Number);
+    Html.RegisterClientScriptInclude("~/Scripts/jquery.numeric.js");
+    Html.RegisterBundle("jqueryval");
+}
+
+@using(Html.BeginForm()) {
+<fieldset>
+    <legend>Lodge Details</legend>
+    @Html.HiddenFor(x => x.LodgeID)
+    <div class="columns">
+        <div class="column">
+            <div class="ui-helper-clearfix">
+                <div class="column">
+                    <div class="editor-label">Lodge Name</div>
+                    <div class="editor-field">@Html.TextBoxFor(x => x.Name, new { @class = "wide" })</div>
+                </div>
+                <div class="column">
+                    <div class="editor-label">Number</div>
+                    <div class="editor-field">@Html.TextBoxFor(x => x.Number, new { @class = "extra-narrow numeric" })</div>
+                </div>
+            </div>
+            <div>@Html.ValidationMessageFor(x => x.Name)</div>
+            <div>@Html.ValidationMessageFor(x => x.Number)</div>
+            <div class="separation">
+                <div class="editor-label">Phone Number</div>
+                <div class="editor-field">@Html.TextBoxFor(x => x.PhoneNumber, new { @class = "wide" })</div>
+                <div>@Html.ValidationMessageFor(x => x.PhoneNumber)</div>
+            </div>
+            <div class="separation">
+                <div class="editor-label">Meeting Dates</div>
+                <div class="editor-field">@Html.TextBoxFor(x => x.MeetingDates, new { @class = "extra-wide" })</div>
+                <div>@Html.ValidationMessageFor(x => x.MeetingDates)</div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div>
+                <div class="editor-label">Street Address</div>
+                <div class="editor-field">@Html.TextBoxFor(x => x.Address.Street, new { @class = "extra-wide" })</div>
+                <div>@Html.ValidationMessageFor(x => x.Address.Street)</div>
+            </div>
+            <div class="ui-helper-clearfix">
+                <div class="column">
+                    <div class="editor-label">Zip Code</div>
+                    <div class="editor-field">@Html.TextBoxFor(x => x.Address.Zip, new { @class = "extra-narrow" })</div>
+                </div>
+                <div class="column">
+                    <div class="editor-label">City</div>
+                    <div class="editor-field">@Html.TextBoxFor(x => x.Address.City)</div>
+                </div>
+                <div class="column">
+                    <div class="editor-label">State</div>
+                    <div class="editor-field">@Html.TextBoxFor(x => x.Address.State, new { @class = "extra-narrow" })</div>
+                </div>
+            </div>
+            <div>@Html.ValidationMessageFor(x => x.Address.City)</div>
+            <div>@Html.ValidationMessageFor(x => x.Address.State)</div>
+            <div>@Html.ValidationMessageFor(x => x.Address.Zip)</div>
+            <div>
+                <div class="editor-label">Country</div>
+                <div class="editor-field">@Html.TextBoxFor(x => x.Address.Country, new { @class = "wide" })</div>
+            </div>
+            <div>@Html.ValidationMessageFor(x => x.Address.Country)</div>
+        </div>
+    </div>
+</fieldset>
+<fieldset>
+    <legend>Lodge Officers</legend>
+    <table class="officer-table">
+        <thead>
+            <tr>
+                <th>Office</th>
+                <th>Officer Name</th>
+                <th>Proxy Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Officers.Count(); i++)
+            {
+                if (!Model.Officers[i].Proxy) {
+                    <tr>
+                        <td>@Model.Officers[i].Title</td>
+                        <td>
+                            @Html.HiddenFor(x => x.Officers[i].OfficeID)
+                            @Html.HiddenFor(x => x.Officers[i].MemberID)
+                            @Html.TextBoxFor(x=>x.Officers[i].Name, new Dictionary<string,object>() {
+                                {"class", "officer-input wide" },
+                                {"data-rowindex", i }
+                            })
+                        </td>
+                        <td>
+                        @{
+                            var proxy = Model.Officers.Where(x => x.OfficeID == Model.Officers[i].OfficeID && x.Proxy).FirstOrDefault();
+                            if(proxy != null) {
+                                int proxyIdx = Model.Officers.IndexOf(proxy);
+                                @Html.HiddenFor(x => x.Officers[proxyIdx].OfficeID)
+                                @Html.HiddenFor(x => x.Officers[proxyIdx].MemberID)
+                                @Html.HiddenFor(x => x.Officers[proxyIdx].Proxy)
+                                @Html.TextBoxFor(x=>x.Officers[proxyIdx].Name, new Dictionary<string,object>() {
+                                    {"class", "officer-input wide" },
+                                    {"data-rowindex", proxyIdx }
+                                })
+                            }
+                        }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</fieldset>
+}
+
+@section Commands {
+    <button id="save-command">Save</button>
+    @Html.ActionLink("Cancel", "View", new { id = Model.LodgeID })
+}
+
+<script type="text/javascript">
+    $(function () {
+        function selectOfficer(event, ui) {
+            if (!ui.Item && $(this).val() != "") {
+                var items = $(this).autocomplete('widget').find('li');
+                if (items.length == 1) {
+                    ui.Item = items.data('ui-autocomplete-item');
+                }
+            }
+            var id = '#Officers_' + $(this).attr('data-rowindex') + '__MemberID';
+            if (ui.Item) {
+                $(id).val(ui.Item.id);
+                $(this).val(ui.Item.label);
+            } else {
+                $(id).val('');
+                $(this).val('');
+            }
+        }
+        $('.officer-input').autocomplete({
+            source: '@Url.Action("OfficerAutocomplete", new { id = Model.LodgeID })',
+            minLength: 2,
+            select: selectOfficer,
+            change: selectOfficer,
+            response: function (event, ui) {
+                if (!ui.content.length) {
+                    $(this).autocomplete('widget').find('li').remove();
+                }
+            }
+        });
+    });
+</script>

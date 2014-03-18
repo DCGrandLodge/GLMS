@@ -60,6 +60,7 @@
     <Compile Include="EntityConfiguration\DegreeConfig.cs" />
     <Compile Include="EntityConfiguration\MemberDegreeConfig.cs" />
     <Compile Include="EntityConfiguration\UserConfig.cs" />
+    <Compile Include="EntityConfiguration\ZipCodeConfig.cs" />
     <Compile Include="GLMSContext.cs" />
     <Compile Include="EntityConfiguration\LodgeConfig.cs" />
     <Compile Include="Migrations\201401311645384_Initial.cs" />
@@ -74,14 +75,61 @@
     <Compile Include="Migrations\201403171714595_AddOfficerProxy.Designer.cs">
       <DependentUpon>201403171714595_AddOfficerProxy.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201403171810573_AddLodgeStatusDate.cs" />
+    <Compile Include="Migrations\201403171810573_AddLodgeStatusDate.Designer.cs">
+      <DependentUpon>201403171810573_AddLodgeStatusDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403171842556_AddOfficeFlags.cs" />
+    <Compile Include="Migrations\201403171842556_AddOfficeFlags.Designer.cs">
+      <DependentUpon>201403171842556_AddOfficeFlags.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403171933355_AddLodgeMergeDate.cs" />
+    <Compile Include="Migrations\201403171933355_AddLodgeMergeDate.Designer.cs">
+      <DependentUpon>201403171933355_AddLodgeMergeDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403172027421_RenameAbbv.cs" />
+    <Compile Include="Migrations\201403172027421_RenameAbbv.Designer.cs">
+      <DependentUpon>201403172027421_RenameAbbv.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403172056173_AddZipCodes.cs" />
+    <Compile Include="Migrations\201403172056173_AddZipCodes.Designer.cs">
+      <DependentUpon>201403172056173_AddZipCodes.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403172146225_AddHonoraryOfficerFlags.cs" />
+    <Compile Include="Migrations\201403172146225_AddHonoraryOfficerFlags.Designer.cs">
+      <DependentUpon>201403172146225_AddHonoraryOfficerFlags.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403181529448_AddMemberFullName.cs" />
+    <Compile Include="Migrations\201403181529448_AddMemberFullName.Designer.cs">
+      <DependentUpon>201403181529448_AddMemberFullName.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201403181659136_FixCalculatedBits.cs" />
+    <Compile Include="Migrations\201403181659136_FixCalculatedBits.Designer.cs">
+      <DependentUpon>201403181659136_FixCalculatedBits.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Migrations\Seed\DegreeData.cs" />
+    <Compile Include="Migrations\Seed\OfficeData.cs" />
     <Compile Include="Migrations\Seed\UserData.cs" />
+    <Compile Include="Migrations\Seed\ZipCodeData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="Migrations\201403172056173_AddZipCodes.resx">
+      <DependentUpon>201403172056173_AddZipCodes.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403172146225_AddHonoraryOfficerFlags.resx">
+      <DependentUpon>201403172146225_AddHonoraryOfficerFlags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403181529448_AddMemberFullName.resx">
+      <DependentUpon>201403181529448_AddMemberFullName.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403181659136_FixCalculatedBits.resx">
+      <DependentUpon>201403181659136_FixCalculatedBits.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZipCodes.csv" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Elmah\Elmah.csproj">
@@ -96,6 +144,10 @@
       <Project>{82d1a046-d09d-44a1-8843-ef33df9a56a3}</Project>
       <Name>GLMS.BLL</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LINQtoCSV\LINQtoCSV.csproj">
+      <Project>{07058bf9-6f86-40ff-ae33-2a4f89b5758a}</Project>
+      <Name>LINQtoCSV</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201401311645384_Initial.resx">
@@ -106,6 +158,18 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201403171714595_AddOfficerProxy.resx">
       <DependentUpon>201403171714595_AddOfficerProxy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403171810573_AddLodgeStatusDate.resx">
+      <DependentUpon>201403171810573_AddLodgeStatusDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403171842556_AddOfficeFlags.resx">
+      <DependentUpon>201403171842556_AddOfficeFlags.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403171933355_AddLodgeMergeDate.resx">
+      <DependentUpon>201403171933355_AddLodgeMergeDate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201403172027421_RenameAbbv.resx">
+      <DependentUpon>201403172027421_RenameAbbv.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

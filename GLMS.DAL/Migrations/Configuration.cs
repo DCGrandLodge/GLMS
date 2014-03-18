@@ -22,6 +22,8 @@ namespace GLMS.DAL.Migrations
             DependencyResolver.SetResolver(new ConfigurationDependencyResolver());
             DegreeData.Seed(context);
             UserData.Seed(context);
+            OfficeData.Seed(context);
+            ZipCodeData.Seed(context);
         }
 
         private class ConfigurationDependencyResolver : IDependencyResolver

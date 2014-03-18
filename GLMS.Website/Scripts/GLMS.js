@@ -35,6 +35,7 @@
 
     $.fn.applyStyles = function () {
         $('.button,input[type="submit"],input[type="button"],input[type="reset"],button,#commands a,.footer-tools a,.header-tools a', this).button();
+        $('.numeric').numeric();
     }
 
     $.GLMS = $.GLMS ||
@@ -50,10 +51,11 @@
         },
         loaded: function () { $('#ajax-loading').hide().css('zIndex', 0); },
 
-        saveForm: function (e) {
+        saveForm: function (e, form) {
             e.preventDefault();
-            if ($('form').first().validate().form()) {
-                $('form').first().submit();
+            if (!form) { form = $('form').first(); }
+            if (form.validate().form()) {
+                form.submit();
             }
         },
 
@@ -225,6 +227,24 @@ $(function () {
             buttonImageOnly: true
         });
     }
+
+    // Nested $(function() { }) so it runs LAST, after all other document-ready callbacks have fired
+    $(function () {
+        $('.ajax-loading').center({ position: 'fixed' });
+        $('body').applyStyles();
+        $("ul#menu li, ul.subtabs li").hover(function () {
+
+            $(this).addClass("hover");
+            $('ul:first', this).css('visibility', 'visible');
+
+        }, function () {
+
+            $(this).removeClass("hover");
+            $('ul:first', this).css('visibility', 'hidden');
+
+        });
+        $('#commands').on('click', '#save-command', $.GLMS.saveForm);
+    });
 });
 
 (function ($) {

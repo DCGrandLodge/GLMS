@@ -92,12 +92,6 @@
             </div>
         </footer>
         <div id='ajax-loading' class='ui-dialog ui-widget-content ui-corner-all ajax-loading'><p class='ajax-spinner'>Loading, please wait...</p></div>
-        <script type="text/javascript">
-            $(function () {
-                $('.ajax-loading').center({ position: 'fixed' });
-                $('body').applyStyles();
-            });
-        </script>
         @RenderSection("scripts", required: false)
     </body>
 </html>

@@ -1,0 +1,143 @@
+﻿@model GLMS.Website.Models.LodgeViewModel
+
+@{
+    ViewBag.Title = String.Format("{0} #{1}", Model.Name, Model.Number);
+}
+
+<style type="text/css">
+    .officer-table th:first-child {
+        width: 190px;
+    }
+    .officer-table th {
+        width: 220px;
+    }
+</style>
+
+<fieldset>
+    <legend>Lodge Details</legend>
+    <div style="padding-right: 10px;">
+        <div class="columns max">
+            <div class="column">
+                <div class="display-label">Lodge Name</div>
+                <div class="display-field">@Model.Name #@Model.Number</div>
+            </div>
+            <div class="column float-right">
+                <div class="display-label">Status</div>
+                <div class="display-field">@Model.Status</div>
+            </div>
+        </div>
+    </div>
+    <div class="columns-2">
+        <div class="column">
+            <div class="display-label">Address</div>
+            <div class="display-field columns">
+                <div class="column">
+                    @Model.Address1<br />
+                    @Model.Address2<br />
+                    @Model.Address3<br />
+                </div>
+                <div class="column">
+                    @Model.PhoneNumber
+                </div>
+            </div>
+
+            <div class="display-label">Meeting Dates</div>
+            <div class="display-field">@Model.MeetingDates</div>
+
+
+            <div style="padding-right: 10px;">
+                <div class="columns max">
+                    <div class="column">
+                        @if(Model.CharterDate.HasValue) {
+                            <div class="display-label">Date Chartered</div>
+                            <div class="display-field">@Html.DisplayFor(x=>x.CharterDate, "LongDate")</div>
+                        } else if (Model.DispensationDate.HasValue) {
+                            <div class="display-label">Date of Dispensation</div>
+                            <div class="display-field">@Html.DisplayFor(x=>x.DispensationDate, "LongDate")</div>
+                        }
+                    </div>
+                    <div class="column float-right">
+                        @if (Model.DarkDate.HasValue)
+                        {
+                            <div class="display-label">Date Gone Dark</div>
+                            <div class="display-field">@Html.DisplayFor(x=>x.DarkDate, "LongDate")</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">
+            @if (Model.MergedInto != null)
+            {
+                <div class="display-label">Merged Into</div>
+                <div class="display-field">@Html.ActionLink(String.Format("{0} #{1}", Model.MergedInto.Name, Model.MergedInto.Number ), "View", new { id = @Model.MergedInto.LodgeID })</div>
+                <div class="display-field">@Html.DisplayFor(x => x.MergedInto.StatusDate, "LongDate")</div>
+            }
+
+            @if (Model.MergedLodges.Any())
+            {
+                <div class="display-label">Merged With</div>
+                foreach (var lodge in Model.MergedLodges)
+                {
+                    <div class="display-field">
+                        @Html.ActionLink(String.Format("{0} #{1}", lodge.Name, lodge.Number ), "View", new { id = lodge.LodgeID })                    
+                        on @Html.DisplayFor(x => lodge.StatusDate, "LongDate")
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</fieldset>
+<div class="columns-2">
+    <div class="column">
+        <fieldset>
+            <legend>Officers</legend>
+
+            <table class="officer-table">
+                <thead>
+                    <tr>
+                        <th>Office</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var officer in Model.Officers)
+                    {
+                        <tr>
+                            <td>@officer.Title</td>
+                            <td>@officer.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+    <div class="column">
+        <fieldset>
+            <legend>Emeritus, Past and Honorary Officers</legend>
+
+            <table class="officer-table">
+                <thead>
+                    <tr>
+                        <th>Office</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var officer in Model.HonoraryOfficers)
+                    {
+                        <tr>
+                            <td>@officer.Title</td>
+                            <td>@officer.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+
+@section Commands {
+    @Html.ActionLink("Lodge List", "Index")
+    @Html.ActionLink("Edit", "Edit", new { id = Model.LodgeID })
+}

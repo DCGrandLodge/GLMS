@@ -93,6 +93,9 @@
   <ItemGroup>
     <Compile Include="AjaxRedirectResult.cs" />
     <Compile Include="AjaxRedirectToRouteResult.cs" />
+    <Compile Include="Back\BackFilter.cs" />
+    <Compile Include="Back\BackTrail.cs" />
+    <Compile Include="Back\BackUnlessExtension.cs" />
     <Compile Include="BundleExtensions.cs" />
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="ControllerFactory.cs" />

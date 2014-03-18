@@ -11,5 +11,7 @@ namespace GLMS.BLL.Entities
         public Guid OfficeID { get; set; }
         public string Title { get; set; }
         public string Abbr { get; set; }
+        public bool GrandOffice { get; set; }
+        public int Sequence { get; set; }
     }
 }

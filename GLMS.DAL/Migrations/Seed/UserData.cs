@@ -8,12 +8,14 @@ using GLMS.BLL.Entities;
 
 namespace GLMS.DAL.Migrations.Seed
 {
-    public class UserData
+    public static class UserData
     {
         public static void Seed(GLMSContext context)
         {
-            context.Users.AddOrUpdate(x => x.UserID,
-                new User()
+            var user = context.Users.Where(x => x.UserID == Guid.Empty).FirstOrDefault();
+            if (user == null)
+            {
+                user = new User()
                 {
                     UserID = Guid.Empty,
                     Username = "sysdba",
@@ -28,8 +30,10 @@ namespace GLMS.DAL.Migrations.Seed
                         PlainTextPassword = "Password1",
                         ForceChange = true,
                     }
-                }
-            );
+                };
+                context.Add(user);
+                context.SaveChanges();
+            }
         }
     }
 }

@@ -63,6 +63,8 @@
     <Compile Include="Entities\MemberDegree.cs" />
     <Compile Include="Entities\Fragments\Password.cs" />
     <Compile Include="Entities\User.cs" />
+    <Compile Include="Entities\ZipCode.cs" />
+    <Compile Include="FieldLengths.cs" />
     <Compile Include="IGLMSContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -11,6 +11,6 @@ namespace GLMS.BLL.Entities
         public Guid DegreeID { get; set; }
         public int Number { get; set; }
         public string Name { get; set; }
-        public string Abbv { get; set; }
+        public string Abbr { get; set; }
     }
 }

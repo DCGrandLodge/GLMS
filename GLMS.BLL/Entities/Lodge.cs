@@ -19,6 +19,8 @@ namespace GLMS.BLL.Entities
         public bool DuesPaying { get; set; } // TODO - Question for Kevin - what are the various Dues fields for?
 
         public string Status { get { return Dark ? "Dark" : Merged ? "Merged" : Chartered ? "Active" : UnderDispensation ? "UD" : null; } private set { } }
+        public DateTime? StatusDate { get { return DarkDate ?? CharterDate ?? DispensationDate; } private set { } }
+
         public DateTime? DispensationDate { get; set; }
         public bool UnderDispensation { get { return DispensationDate.HasValue && !Dark && !Merged && !CharterDate.HasValue; } private set { } }
         public DateTime? CharterDate { get; set; }
@@ -26,12 +28,18 @@ namespace GLMS.BLL.Entities
         public DateTime? DarkDate { get; set; }
         public bool Dark { get { return !DarkDate.HasValue; } private set { } }
         public Guid? MergedWithLodgeID { get; set; }
+        public DateTime? MergedDate { get; set; }
         public bool Merged { get { return !MergedWithLodgeID.HasValue; } private set { } }
 
         public virtual ICollection<LodgeMembership> LodgeMembership { get; set; }
         public virtual ICollection<LodgeOfficer> Officers { get; set; }
         public virtual ICollection<Lodge> MergedLodges { get; set; }
         public virtual Lodge MergedWithLodge { get; set; }
+
+        public Lodge()
+        {
+            Address = new Address();
+        }
 
     }
 }

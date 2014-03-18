@@ -14,6 +14,10 @@ namespace GLMS.BLL.Entities
         public Guid LodgeOfficeID { get; set; }
 
         public bool Proxy { get; set; }
+        public bool Honorary { get; set; }
+        public bool PastOfficer { get; set; }
+        public bool Emeritus { get; set; }
+
         public bool Appointed { get; set; }
         public DateTime DateElected { get; set; }
         public DateTime? DateInstalled { get; set; }

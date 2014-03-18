@@ -4,6 +4,7 @@ using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GLMS.BLL;
 using GLMS.BLL.Entities;
 
 namespace GLMS.DAL.EntityConfiguration
@@ -14,8 +15,8 @@ namespace GLMS.DAL.EntityConfiguration
         {
             ToTable("Office");
             HasKey(x => x.OfficeID);
-            Property(x => x.Title).HasMaxLength(120);
-            Property(x => x.Abbr).HasMaxLength(16);
+            Property(x => x.Title).HasMaxLength(FieldLengths.Office.Title);
+            Property(x => x.Abbr).HasMaxLength(FieldLengths.Office.Abbr);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GLMS.BLL;
 using GLMS.BLL.Entities;
 
 namespace GLMS.DAL.EntityConfiguration
@@ -12,11 +13,11 @@ namespace GLMS.DAL.EntityConfiguration
     {
         public AddressConfig()
         {
-            Property(x => x.Street).HasMaxLength(128);
-            Property(x => x.City).HasMaxLength(128);
-            Property(x => x.State).HasMaxLength(2);
-            Property(x => x.Zip).HasMaxLength(10);
-            Property(x => x.Country).HasMaxLength(128);
+            Property(x => x.Street).HasMaxLength(FieldLengths.Address.Street);
+            Property(x => x.City).HasMaxLength(FieldLengths.Address.City);
+            Property(x => x.State).HasMaxLength(FieldLengths.Address.State);
+            Property(x => x.Zip).HasMaxLength(FieldLengths.Address.Zip);
+            Property(x => x.Country).HasMaxLength(FieldLengths.Address.Country);
         }
     }
 }

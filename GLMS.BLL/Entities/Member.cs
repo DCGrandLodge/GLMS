@@ -37,6 +37,7 @@ namespace GLMS.BLL.Entities
                  */
                 return String.Format("{0}, {1}", LastName, String.Join(" ", FirstName, MiddleName));
             }
+            private set { }
         }
     }
 }

@@ -17,6 +17,7 @@ namespace GLMS.BLL
         IQueryable<Member> Members { get; }
         IQueryable<User> Users { get; }
         IQueryable<Office> Offices { get; }
+        IQueryable<ZipCode> ZipCodes { get; }
 
         // CRUD
         void Add<T>(T entity) where T : class;

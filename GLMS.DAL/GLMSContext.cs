@@ -28,6 +28,7 @@ namespace GLMS.DAL
         public DbSet<Lodge> Lodges { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<ZipCode> ZipCodes { get; set; }
 
         #region IGLMSContext
         IQueryable<Degree> IGLMSContext.Degrees { get { return Degrees; } }
@@ -35,6 +36,7 @@ namespace GLMS.DAL
         IQueryable<Lodge> IGLMSContext.Lodges { get { return Lodges; } }
         IQueryable<Member> IGLMSContext.Members { get { return Members; } }
         IQueryable<User> IGLMSContext.Users { get { return Users; } }
+        IQueryable<ZipCode> IGLMSContext.ZipCodes { get { return ZipCodes; } }
         #endregion
     
         public GLMSContext()
@@ -85,6 +87,7 @@ namespace GLMS.DAL
             modelBuilder.Configurations.Add(new MemberDegreeConfig());
             modelBuilder.Configurations.Add(new OfficeConfig());
             modelBuilder.Configurations.Add(new UserConfig());
+            modelBuilder.Configurations.Add(new ZipCodeConfig());
 
             // Complex Types
             modelBuilder.ComplexType<Password>();
